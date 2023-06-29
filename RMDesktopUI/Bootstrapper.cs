@@ -15,7 +15,7 @@ namespace RMDesktopUI
 
         public Bootstrapper() 
         { 
-            Initialize(); 
+            Initialize();
         }
 
         protected override void Configure()
