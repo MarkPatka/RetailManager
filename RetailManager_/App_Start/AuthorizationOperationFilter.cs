@@ -1,8 +1,5 @@
 ﻿using Swashbuckle.Swagger;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Http.Description;
 
 namespace RetailManager_.App_Start
@@ -23,7 +20,6 @@ namespace RetailManager_.App_Start
                 description = "access token",
                 required = false,
                 type = "string"
-
             });
         }
     }

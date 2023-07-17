@@ -5,7 +5,6 @@ using Swashbuckle.Application;
 using RetailManager_.App_Start;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
-
 namespace RetailManager_
 {
     public class SwaggerConfig
