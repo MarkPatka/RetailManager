@@ -1,4 +1,5 @@
-﻿using RMDesktopUI.Models;
+﻿using Caliburn.Micro;
+using RMDesktopUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -52,15 +53,11 @@ namespace RMDesktopUI.Helpers
                         throw new Exception(response.ReasonPhrase);
                     }
                 };
-
             }
             else
             {
                 throw new Exception("\"Client\" cannot be null");
             }
-
-
         }
-
     }
 }

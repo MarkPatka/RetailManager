@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             xmlns:viewmodels="clr-namespace:RMDesktopUI.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:LoginViewModel}"
              mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{x:Null}"
@@ -51,11 +53,16 @@
                            FontFamily="Segoe UI Light"
                            Text="Welcome Back!"/>
 
-                <TextBlock FontSize="17"
+                <TextBlock x:Name="ErrorMessage"
+                           FontSize="17"
                            FontWeight="SemiBold"
                            FontFamily="Segoe UI Light"
                            HorizontalAlignment="Center"
-                           Text="Log in to your existing account"/>
+                           Foreground="Red"
+                           MaxWidth="300"
+                           TextWrapping="Wrap"
+                           Visibility="{Binding IsErrorVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                           />
 
                 <TextBox Margin="0 20 0 0 "
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
