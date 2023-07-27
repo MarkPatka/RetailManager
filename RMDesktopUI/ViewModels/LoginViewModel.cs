@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using RMDesktopUI.EventModels;
 using RMDesktopUI.Library.Api;
 using System;
 using System.Threading.Tasks;
@@ -11,10 +12,12 @@ namespace RMDesktopUI.ViewModels
         private string _password;
         private string _errorMessage;
         private IAPIHelper _apiHelper;
+        private IEventAggregator _events;
 
-		public LoginViewModel(IAPIHelper apiHelper)
+		public LoginViewModel(IAPIHelper apiHelper, IEventAggregator events)
 		{
 			_apiHelper = apiHelper;
+            _events = events;
 		}
 
         public bool IsErrorVisible
@@ -88,6 +91,8 @@ namespace RMDesktopUI.ViewModels
 
                 if (!string.IsNullOrEmpty(token))
                     await _apiHelper.GetLoggedInUserinfo(token);
+
+                await _events.PublishOnUIThreadAsync(new LogOnEvent());
             }
             catch (Exception ex)
 			{

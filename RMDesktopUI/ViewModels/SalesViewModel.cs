@@ -5,11 +5,13 @@ namespace RMDesktopUI.ViewModels
 {
     public class SalesViewModel : Screen
     {
-		private BindingList<string>? _products;
+        #region VAR
+        private BindingList<string>? _products;
         private BindingList<string>? _cart;
         private int _itemQuantity;
+        #endregion
 
-
+        #region PROPERTIES
         public BindingList<string>? Products
         {
 			get { return _products; }
@@ -19,7 +21,6 @@ namespace RMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => Products);
 			}
 		}
-
 
 		public BindingList<string>? Cart
 		{
@@ -64,8 +65,9 @@ namespace RMDesktopUI.ViewModels
                 return "$0.00";
             }
         }
+        #endregion
 
-
+        #region PUBLIC METHODS
         public bool CanAddToCart
 		{
 			get
@@ -112,7 +114,6 @@ namespace RMDesktopUI.ViewModels
         {
 
         }
-
-
+        #endregion
     }
 }
