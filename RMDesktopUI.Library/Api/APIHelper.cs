@@ -16,6 +16,10 @@ namespace RMDesktopUI.Library.Api
             _loggedInUser = loggedInUser;
         }
 
+        public HttpClient? Client
+        {
+            get { return client; }
+
         private void InitializeClient()
         {
             string api = ConfigurationManager.AppSettings["api"] ?? string.Empty;
