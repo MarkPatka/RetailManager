@@ -19,6 +19,7 @@ namespace RMDesktopUI.Library.Api
         public HttpClient? Client
         {
             get { return client; }
+        }
 
         private void InitializeClient()
         {

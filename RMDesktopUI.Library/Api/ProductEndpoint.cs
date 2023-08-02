@@ -1,15 +1,30 @@
 ﻿
+using RMDesktopUI.Library.Models;
 
 namespace RMDesktopUI.Library.Api
 {
-    public class ProductEndpoint
+    public class ProductEndpoint : IProductEndpoint
     {
         private readonly IAPIHelper _apiHelper;
 
-        public ProductEndpoint(IAPIHelper apiHelper) 
+        public ProductEndpoint(IAPIHelper apiHelper)
         {
-            _apiHelper = apiHelper;        
+            _apiHelper = apiHelper;
         }
-        // https://youtu.be/boDpqLwviQc?list=PLLWMQd6PeGY0bEMxObA6dtYXuJOGfxSPx&t=2613
+        public async Task<List<ProductModel>> GetAll()
+        {
+            using (HttpResponseMessage response = await _apiHelper.Client.GetAsync("api/Product"))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsAsync<List<ProductModel>>();
+                    return result;
+                }
+                else
+                {
+                    throw new Exception(response.ReasonPhrase);
+                }
+            }
+        }
     }
 }
