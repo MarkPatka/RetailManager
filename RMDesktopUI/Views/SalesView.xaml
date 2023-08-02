@@ -52,7 +52,13 @@
                  Style="{StaticResource MaterialDesignCardsListBox}"
                  BorderThickness="1"
                  BorderBrush="{StaticResource MaterialDesignDarkBackground}"
-                 />
+                 >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding ProductName}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <!-- Item Add/Remove -->
         <StackPanel Orientation="Vertical"
