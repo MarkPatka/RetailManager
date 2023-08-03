@@ -1,7 +1,9 @@
 ﻿using Caliburn.Micro;
 using RMDesktopUI.Library.Api;
 using RMDesktopUI.Library.Models;
+using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RMDesktopUI.ViewModels
@@ -9,10 +11,11 @@ namespace RMDesktopUI.ViewModels
     public class SalesViewModel : Screen
     {
         #region VAR
-        private BindingList<ProductModel>? _products;
-        private BindingList<ProductModel>? _cart;
-        private int _itemQuantity;
+        private BindingList<ProductModel>? _products = new();
+        private BindingList<CartItemModel>? _cart = new();
+        private int _itemQuantity = 1;
         IProductEndpoint _productEndpoint;
+        private ProductModel? _selectedProduct;
         #endregion
 
         #region PROPERTIES
@@ -25,8 +28,7 @@ namespace RMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => Products);
 			}
 		}
-
-		public BindingList<ProductModel>? Cart
+		public BindingList<CartItemModel>? Cart
 		{
 			get { return _cart; }
 			set 
@@ -35,25 +37,40 @@ namespace RMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => Cart);
 			}
 		}
-
-		public int ItemQuantity
+        public ProductModel? SelectedProduct
+        {
+            get { return _selectedProduct; }
+            set 
+            {
+                _selectedProduct = value;
+                NotifyOfPropertyChange(() => SelectedProduct);
+                NotifyOfPropertyChange(() => ItemQuantity);
+            }
+        }
+        public int ItemQuantity
 		{
 			get { return _itemQuantity; }
 			set 
 			{ 
 				_itemQuantity = value; 
 				NotifyOfPropertyChange(() => ItemQuantity);
-			}
-		}
+                NotifyOfPropertyChange(() => CanAddToCart);
 
+            }
+        }
 		public string SubTotal
 		{
 			get 
 			{
-				return "$0.00";
+                decimal subTotal = 0;
+                foreach (var item in Cart!) 
+                {
+                    subTotal += (item.Product?.RetailPrice * item.QuantityInCart) 
+                        ?? throw new ArgumentNullException("The Product is NULL");
+                }
+                return subTotal.ToString("C");
 			}
 		}
-
         public string Total
         {
             get
@@ -61,7 +78,6 @@ namespace RMDesktopUI.ViewModels
                 return "$0.00";
             }
         }
-
         public string Tax
         {
             get
@@ -94,15 +110,39 @@ namespace RMDesktopUI.ViewModels
 			get
 			{
 				bool output = false;
+                if (ItemQuantity > 0 && SelectedProduct?.QuantityInStock >= ItemQuantity)
+                {
+                    output = true;
+                }
+
 				return output;
 
 			}
 		}
-
 		public void AddToCart()
 		{
+            CartItemModel? existingItem = Cart?.FirstOrDefault(x => x.Product == SelectedProduct);
 
-		}
+            if (existingItem != null)
+            {
+                existingItem.QuantityInCart += ItemQuantity;
+                Cart?.Remove(existingItem);
+                Cart?.Add(existingItem);
+            }
+            else
+            {
+                CartItemModel item = new()
+                {
+                    Product = SelectedProduct!,
+                    QuantityInCart = ItemQuantity
+                };
+                Cart?.Add(item);
+            }
+                        
+            SelectedProduct!.QuantityInStock -= ItemQuantity;
+            ItemQuantity = 1;
+            NotifyOfPropertyChange(() => SubTotal);
+        }
 
 
         public bool CanRemoveToCart
@@ -114,10 +154,9 @@ namespace RMDesktopUI.ViewModels
 
             }
         }
-
         public void RemoveToCart()
         {
-
+            NotifyOfPropertyChange(() => SubTotal);
         }
 
 
@@ -130,7 +169,6 @@ namespace RMDesktopUI.ViewModels
 
             }
         }
-
         public void Checkout()
         {
 
