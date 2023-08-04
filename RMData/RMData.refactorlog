@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="11e1c2fd-556c-4661-9958-e194337ac3a1" ChangeDateTime="08/04/2023 07:16:47">
+    <Property Name="ElementName" Value="[dbo].[Product].[isTaxible]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Product]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IsTaxible" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d52c82b0-1bda-4383-804f-d3dc8dd30034" ChangeDateTime="08/04/2023 07:17:13">
+    <Property Name="ElementName" Value="[dbo].[Product].[IsTaxible]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Product]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IsTaxable" />
+  </Operation>
+</Operations>

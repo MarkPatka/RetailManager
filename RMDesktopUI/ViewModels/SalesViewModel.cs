@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using RMDesktopUI.Library.Api;
+using RMDesktopUI.Library.Helpers;
 using RMDesktopUI.Library.Models;
 using System;
 using System.ComponentModel;
@@ -11,11 +12,13 @@ namespace RMDesktopUI.ViewModels
     public class SalesViewModel : Screen
     {
         #region VAR
+        private readonly IProductEndpoint _productEndpoint;
+        private readonly IConfigHelper _configHelper;
+        
         private BindingList<ProductModel>? _products = new();
         private BindingList<CartItemModel>? _cart = new();
-        private int _itemQuantity = 1;
-        IProductEndpoint _productEndpoint;
         private ProductModel? _selectedProduct;
+        private int _itemQuantity = 1;
         #endregion
 
         #region PROPERTIES
@@ -28,7 +31,8 @@ namespace RMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => Products);
 			}
 		}
-		public BindingList<CartItemModel>? Cart
+		
+        public BindingList<CartItemModel>? Cart
 		{
 			get { return _cart; }
 			set 
@@ -37,6 +41,7 @@ namespace RMDesktopUI.ViewModels
 				NotifyOfPropertyChange(() => Cart);
 			}
 		}
+       
         public ProductModel? SelectedProduct
         {
             get { return _selectedProduct; }
@@ -47,6 +52,7 @@ namespace RMDesktopUI.ViewModels
                 NotifyOfPropertyChange(() => ItemQuantity);
             }
         }
+        
         public int ItemQuantity
 		{
 			get { return _itemQuantity; }
@@ -55,54 +61,24 @@ namespace RMDesktopUI.ViewModels
 				_itemQuantity = value; 
 				NotifyOfPropertyChange(() => ItemQuantity);
                 NotifyOfPropertyChange(() => CanAddToCart);
+            }
+        }
+		
+        public string SubTotal => CalculateSubTotal().ToString("C");
+        
+        public string Total => 
+            (CalculateSubTotal() + CalculateTax()).ToString("C");
 
-            }
-        }
-		public string SubTotal
-		{
-			get 
-			{
-                decimal subTotal = 0;
-                foreach (var item in Cart!) 
-                {
-                    subTotal += (item.Product?.RetailPrice * item.QuantityInCart) 
-                        ?? throw new ArgumentNullException("The Product is NULL");
-                }
-                return subTotal.ToString("C");
-			}
-		}
-        public string Total
-        {
-            get
-            {
-                return "$0.00";
-            }
-        }
-        public string Tax
-        {
-            get
-            {
-                return "$0.00";
-            }
-        }
+        public string Tax => CalculateTax().ToString("C");
         #endregion
 
-        public SalesViewModel(IProductEndpoint productEndpoint)
+        #region CTOR
+        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper)
         {
-            _productEndpoint = productEndpoint;            
+            _productEndpoint = productEndpoint;
+            _configHelper = configHelper;
         }
-
-        protected override async void OnViewLoaded(object view)
-        {
-            base.OnViewLoaded(view);
-            await LoadProducts();
-        }
-
-        private async Task LoadProducts()
-        {
-            var productList = await _productEndpoint.GetAll();
-            Products = new BindingList<ProductModel>(productList);
-        }
+        #endregion
 
         #region PUBLIC METHODS
         public bool CanAddToCart
@@ -142,6 +118,9 @@ namespace RMDesktopUI.ViewModels
             SelectedProduct!.QuantityInStock -= ItemQuantity;
             ItemQuantity = 1;
             NotifyOfPropertyChange(() => SubTotal);
+            NotifyOfPropertyChange(() => Tax);
+            NotifyOfPropertyChange(() => Total);
+
         }
 
 
@@ -157,6 +136,8 @@ namespace RMDesktopUI.ViewModels
         public void RemoveToCart()
         {
             NotifyOfPropertyChange(() => SubTotal);
+            NotifyOfPropertyChange(() => Tax);
+            NotifyOfPropertyChange(() => Total);
         }
 
 
@@ -172,6 +153,49 @@ namespace RMDesktopUI.ViewModels
         public void Checkout()
         {
 
+        }
+        #endregion
+
+        #region PRIVATE
+        private decimal CalculateSubTotal()
+        {
+            decimal subTotal = 0;
+            foreach (var item in Cart!)
+            {
+                subTotal += (item.Product?.RetailPrice * item.QuantityInCart)
+                    ?? throw new ArgumentNullException("The Product is NULL");
+            }
+            return subTotal;
+        }
+
+        private decimal CalculateTax()
+        {
+            decimal taxAmount = 0;
+            decimal taxRate = _configHelper.GetTaxRate() * 0.01m;
+
+            foreach (var item in Cart!)
+            {
+                if (item.Product != null && item.Product.IsTaxable)
+                {
+                    taxAmount += (item.Product.RetailPrice * item.QuantityInCart * taxRate);
+                }
+            }
+            return taxAmount;
+        }
+
+        private async Task LoadProducts()
+        {
+            var productList = await _productEndpoint.GetAll();
+            Products = new BindingList<ProductModel>(productList);
+        }
+
+        #endregion
+
+        #region OVERRIDE
+        protected override async void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+            await LoadProducts();
         }
         #endregion
     }
