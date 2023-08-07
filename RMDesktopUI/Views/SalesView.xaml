@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:RMDesktopUI.Views"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
              xmlns:viewmodels="clr-namespace:RMDesktopUI.ViewModels" 
              d:DataContext="{d:DesignInstance Type=viewmodels:SalesViewModel}"
              mc:Ignorable="d" 
@@ -56,7 +55,24 @@
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding ProductName}"/>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding ProductName}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Price: " 
+                                           FontSize="14"/>
+                                <TextBlock Text="{Binding RetailPrice, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}, StringFormat='{}{0:C}'}" 
+                                           FontSize="14"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="5 0 0 0">
+                                <TextBlock Text="Qty: " 
+                                           FontSize="14"/>
+                                <TextBlock Text="{Binding QuantityInStock, StringFormat={}{0:#}}" 
+                                           FontSize="14"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
