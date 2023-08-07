@@ -55,7 +55,7 @@
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical">                        
                         <TextBlock Text="{Binding ProductName}"/>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel Orientation="Horizontal">
@@ -73,8 +73,8 @@
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
+                </DataTemplate>                
+            </ListBox.ItemTemplate>            
         </ListBox>
 
         <!-- Item Add/Remove -->

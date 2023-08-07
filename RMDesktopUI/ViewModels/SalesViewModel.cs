@@ -120,7 +120,7 @@ namespace RMDesktopUI.ViewModels
             NotifyOfPropertyChange(() => SubTotal);
             NotifyOfPropertyChange(() => Tax);
             NotifyOfPropertyChange(() => Total);
-
+            NotifyOfPropertyChange(() => CanCheckOut);
         }
 
 
@@ -138,21 +138,16 @@ namespace RMDesktopUI.ViewModels
             NotifyOfPropertyChange(() => SubTotal);
             NotifyOfPropertyChange(() => Tax);
             NotifyOfPropertyChange(() => Total);
+            NotifyOfPropertyChange(() => CanCheckOut);
+
         }
 
 
-        public bool CanCheckOut
-        {
-            get
-            {
-                bool output = false;
-                return output;
-
-            }
-        }
+        public bool CanCheckOut => Cart?.Count > 0;        
+        
         public void Checkout()
         {
-
+            // create a salemodel and post to the api
         }
         #endregion
 
@@ -186,7 +181,6 @@ namespace RMDesktopUI.ViewModels
             var productList = await _productEndpoint.GetAll();
             Products = new BindingList<ProductModel>(productList);
         }
-
         #endregion
 
         #region OVERRIDE
