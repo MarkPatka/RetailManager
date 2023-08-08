@@ -13,6 +13,7 @@ namespace RMDesktopUI.ViewModels
     {
         #region VAR
         private readonly IProductEndpoint _productEndpoint;
+        private readonly ISaleEndpoint _saleEndpoint;
         private readonly IConfigHelper _configHelper;
         
         private BindingList<ProductModel>? _products = new();
@@ -48,8 +49,9 @@ namespace RMDesktopUI.ViewModels
             set 
             {
                 _selectedProduct = value;
+                NotifyOfPropertyChange(() => CanAddToCart);
                 NotifyOfPropertyChange(() => SelectedProduct);
-                NotifyOfPropertyChange(() => ItemQuantity);
+
             }
         }
         
@@ -59,8 +61,8 @@ namespace RMDesktopUI.ViewModels
 			set 
 			{ 
 				_itemQuantity = value; 
-				NotifyOfPropertyChange(() => ItemQuantity);
                 NotifyOfPropertyChange(() => CanAddToCart);
+                NotifyOfPropertyChange(() => ItemQuantity);
             }
         }
 		
@@ -73,10 +75,11 @@ namespace RMDesktopUI.ViewModels
         #endregion
 
         #region CTOR
-        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper)
+        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper, ISaleEndpoint saleEndpoint)
         {
             _productEndpoint = productEndpoint;
             _configHelper = configHelper;
+            _saleEndpoint = saleEndpoint;
         }
         #endregion
 
@@ -86,7 +89,7 @@ namespace RMDesktopUI.ViewModels
 			get
 			{
 				bool output = false;
-                if (ItemQuantity > 0 && SelectedProduct?.QuantityInStock >= ItemQuantity)
+                if (SelectedProduct?.QuantityInStock >= ItemQuantity)
                 {
                     output = true;
                 }
@@ -117,6 +120,7 @@ namespace RMDesktopUI.ViewModels
                         
             SelectedProduct!.QuantityInStock -= ItemQuantity;
             ItemQuantity = 1;
+
             NotifyOfPropertyChange(() => SubTotal);
             NotifyOfPropertyChange(() => Tax);
             NotifyOfPropertyChange(() => Total);
@@ -143,11 +147,22 @@ namespace RMDesktopUI.ViewModels
         }
 
 
-        public bool CanCheckOut => Cart?.Count > 0;        
-        
-        public void Checkout()
+        public bool CanCheckOut => Cart?.Count > 0;                
+        public async Task Checkout()
         {
             // create a salemodel and post to the api
+            SaleModel sale = new();
+
+            foreach (var item in Cart!)
+            {
+                sale.SaleDetails?.Add(new SaleDetailModel
+                {
+                    ProductId = item.Product?.Id 
+                    ?? throw new ArgumentNullException("The product is null"),
+                    Quantity = item.QuantityInCart
+                });
+            }
+            await _saleEndpoint.PostSale(sale);
         }
         #endregion
 

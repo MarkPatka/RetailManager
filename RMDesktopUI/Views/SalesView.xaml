@@ -47,26 +47,26 @@
                  Grid.Row="2" 
                  Grid.Column="0"
                  MinHeight="200" 
-                 MinWidth="150"                 
-                 Style="{StaticResource MaterialDesignCardsListBox}"
+                 MinWidth="150"
                  BorderThickness="1"
                  BorderBrush="{StaticResource MaterialDesignDarkBackground}"
                  SelectedItem="{Binding SelectedProduct}"
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical">                        
-                        <TextBlock Text="{Binding ProductName}"/>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding ProductName}" 
+                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"/>
                         <StackPanel Orientation="Horizontal">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Price: " 
+                                <TextBlock Text="Цена: " 
                                            FontSize="14"/>
                                 <TextBlock Text="{Binding RetailPrice, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}, StringFormat='{}{0:C}'}" 
                                            FontSize="14"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" 
                                         Margin="5 0 0 0">
-                                <TextBlock Text="Qty: " 
+                                <TextBlock Text="Кол-во: " 
                                            FontSize="14"/>
                                 <TextBlock Text="{Binding QuantityInStock, StringFormat={}{0:#}}" 
                                            FontSize="14"/>
@@ -118,13 +118,13 @@
                  Grid.Column="2"
                  MinHeight="200" 
                  MinWidth="150"
-                 Style="{StaticResource MaterialDesignCardsListBox}"
                  BorderThickness="1"
-                 BorderBrush="{StaticResource MaterialDesignDarkBackground}"
+                 BorderBrush="{StaticResource MaterialDesignDarkBackground}"                 
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DisplayText}"/>
+                    <TextBlock Text="{Binding DisplayText}"
+                               Style="{StaticResource MaterialDesignTextBlock}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
